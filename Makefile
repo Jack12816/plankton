@@ -6,6 +6,7 @@ SHELL := bash
 .SUFFIXES:
 .PHONY: shell install test
 
+DOCKER ?= docker
 GEM ?= gem
 GIT ?= git
 RAKE ?= rake

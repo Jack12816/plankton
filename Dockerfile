@@ -9,7 +9,7 @@ RUN apk add --update                                             \
   libstdc++ tzdata bash ca-certificates                          \
   build-base git                                                 \
   &&                                                             \
-  bundle install --clean --deployment --without development      \
+  bundle install --clean --without development                   \
   &&                                                             \
   apk del libstdc++ tzdata bash build-base
 
