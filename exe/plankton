@@ -1,0 +1,82 @@
+#!/usr/bin/env ruby
+
+require 'thor'
+require 'tty-table'
+require 'filesize'
+require 'recursive-open-struct'
+require 'plankton'
+
+class App < Thor
+  class_option :hostname,
+               desc: 'The Docker Registry to work with',
+               required: false,
+               aliases: '-h',
+               type: :string
+  class_option :username,
+               desc: 'The username for authentication',
+               aliases: '-u',
+               type: :string
+  class_option :password,
+               desc: 'The password for authentication',
+               aliases: '-p',
+               type: :string
+  class_option :confirm,
+               desc: 'User interaction is required',
+               type: :boolean,
+               default: true
+  class_option :verbose,
+               desc: 'Be verbose while processing',
+               aliases: '-v',
+               type: :boolean,
+               default: false
+
+  no_commands do
+    include Plankton::EnvVars
+    include Plankton::Helpers
+    alias_method :orig_help, :help
+  end
+
+  def help(command = nil, subcommand = false)
+    orig_help(command, subcommand)
+    puts
+    puts <<~ENV
+      Environment:
+        REGISTRY_CLI_HOSTNAME  # Specify the Docker Registry hostame
+                               # --username takes precedence over the env var
+        REGISTRY_CLI_USERNAME  # The username for authentication
+                               # --hostname takes precedence over the env var
+        REGISTRY_CLI_PASSWORD  # The password for authentication
+                               # --password takes precedence over the env var
+    ENV
+    puts
+  end
+
+  include Plankton::Command::Tags
+  include Plankton::Command::Tag
+  include Plankton::Command::Rmtag
+  include Plankton::Command::Cleanup
+end
+
+def error_with_help(err)
+  puts err
+  puts 'Command aborted.'
+  puts
+  App.new.help
+  exit 1
+end
+
+begin
+  ENV['THOR_DEBUG'] = '1'
+  App.start(ARGV)
+rescue Interrupt => e
+  puts "\n\n"
+  puts 'Command aborted.'
+  exit 1
+rescue Thor::UndefinedCommandError => e
+rescue Thor::InvocationError => e
+  error_with_help(e)
+rescue Plankton::EnvVarNotFoundError => e
+  error_with_help("#{e.message} was not found.")
+rescue RestClient::Forbidden => e
+  error_with_help("Authentication failed. (#{e.message})")
+end
