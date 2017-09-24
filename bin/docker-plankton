@@ -1,0 +1,3 @@
+#!/bin/sh
+
+cd /app && bundle exec exe/plankton $@

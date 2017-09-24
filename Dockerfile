@@ -11,7 +11,11 @@ RUN apk add --update                                             \
   &&                                                             \
   bundle install --clean --without development                   \
   &&                                                             \
-  apk del libstdc++ tzdata bash build-base
+  apk del libstdc++ tzdata bash build-base                       \
+  &&                                                             \
+  cp /app/bin/docker-plankton /bin/plankton                      \
+  &&                                                             \
+  chmod +x /bin/plankton
 
 ENTRYPOINT /usr/bin/bundle exec exe/plankton
 CMD help
