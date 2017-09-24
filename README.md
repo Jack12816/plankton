@@ -15,6 +15,7 @@ deployments and save memory at the end.
   - [Tag details](#tag-details)
   - [Delete a tag](#delete-a-tag)
   - [Cleanup tags](#cleanup-tags)
+  - [Gitlab CI](#gitlab-ci)
 - [Development](#development)
 - [Contributing](#contributing)
 - [License](#license)
@@ -199,6 +200,30 @@ Cleanup apps/fancy (1 tags)? [yes, no] yes
 
 Deleted 1.1.0 (freed 273.27 MiB)
 ```
+
+### Gitlab CI
+
+If you are interested in the usage of Plankton ontop of your Gitlab CI system,
+here comes a ready to use solution:
+
+```yaml
+cleanup:
+  image:
+    name: jack12816/plankton
+    entrypoint: ["/bin/sh", "-c"]
+  variables:
+    REGISTRY_CLI_HOSTNAME: your.registry.tld
+    REGISTRY_CLI_USERNAME: gitlab-ci-token
+    REGISTRY_CLI_PASSWORD: ${CI_JOB_TOKEN}
+  script: plankton cleanup --keep 3 --no-confirm apps/fancy
+```
+
+Just use the Plankton operations as normal. Just setup some Gitlab CI stages to
+perform your operations in the correct order. (Something like build, test,
+publish, cleanup) The `REGISTRY_CLI_USERNAME` and `REGISTRY_CLI_PASSWORD`
+environment variables are correctly set if you use a Docker Registry which is
+authenticated by Gitlab. If you use a HTTP Basic Authentication, just set them
+accordingly.
 
 ## Development
 
