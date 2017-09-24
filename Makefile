@@ -46,10 +46,12 @@ test: install
 build:
 	# Build the Docker image
 	@$(DOCKER) build -t $(DOCKER_IMAGE):$(DOCKER_VERSION) .
+	@$(DOCKER) tag $(DOCKER_IMAGE):$(DOCKER_VERSION) $(DOCKER_IMAGE):latest
 
 publish:
 	# Push the Docker image
 	@$(DOCKER) push $(DOCKER_IMAGE):$(DOCKER_VERSION)
+	@$(DOCKER) push $(DOCKER_IMAGE):latest
 
 release: release-minor
 
