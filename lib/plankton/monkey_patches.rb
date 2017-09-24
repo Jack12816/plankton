@@ -32,6 +32,7 @@ class DockerRegistry2::Registry
   # Speed up processing, by memorizing the JWT token
   # for the given header.
   def authenticate_bearer(header)
+    puts header
     @token ||= {}
     @token[header] ||= orig_authenticate_bearer(header)
   end
