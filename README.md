@@ -225,6 +225,11 @@ environment variables are correctly set if you use a Docker Registry which is
 authenticated by Gitlab. If you use a HTTP Basic Authentication, just set them
 accordingly.
 
+**Heads up!** Unfortunately the cleanup actions are not permitted by Gitlab for
+the `CI_JOB_TOKEN` at the moment.  You can work around this by following [the
+instructions on the
+issue](https://github.com/Jack12816/plankton/issues/1#issuecomment-333797086).
+
 ## Development
 
 After checking out the repo, run `make install` to install dependencies. Then,
